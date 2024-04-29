@@ -1,0 +1,16 @@
+This file details how the whole application works.
+
+The arguments.py file is used to provide the program with the needed inputs such as the camera feed feed
+and also the destination to store the resulting video.
+
+source_video_path(arguments.py): this is the source of the video feed for the drone algorithm
+camera0-3(arguments.py): these represent the sources for the four camera algorithm
+
+These variables must be change to the source of your video feed
+
+The program is set to run using the four camera mode by default using "python main.py"
+to change it to the drone mode use "python main.py --mode=aerial"
+
+
+To install the packages in the requirement.txt file use
+"pip install -r requirements.txt"

@@ -2,15 +2,13 @@ import time
 import cv2
 from helper_func import ObjectTracking
 from deep_sort_realtime.deepsort_tracker import DeepSort
-from multiprocessing import Process, Manager
 from arguments import camera0, camera1, camera2, camera3
 
-#  This video file should be replaced with the video feed from the cameras at the intersection
-# The video feed should be split into 4 lanes and each lane should be processed separately
-cap = cv2.VideoCapture(camera0) 
+cap = cv2.VideoCapture(camera0)
 cap1 = cv2.VideoCapture(camera1)
 cap2 = cv2.VideoCapture(camera2)
 cap3 = cv2.VideoCapture(camera3)
+
 
 def frame_processing(no_of_vehicles_per_lane, green_lane):
     """
@@ -27,53 +25,53 @@ def frame_processing(no_of_vehicles_per_lane, green_lane):
     ob = ObjectTracking()
 
     objects = [
-    "person", "bicycle", "car", "motorbike", "aeroplane", "bus", "train", "truck",
-    "boat", "traffic light", "fire hydrant", "stop sign", "parking meter", "bench",
-    "bird", "cat", "dog", "horse", "sheep", "cow", "elephant", "bear", "zebra",
-    "giraffe", "backpack", "umbrella", "handbag", "tie", "suitcase", "frisbee",
-    "skis", "snowboard", "sports ball", "kite", "baseball bat", "baseball glove",
-    "skateboard", "surfboard", "tennis racket", "bottle", "wine glass", "cup",
-    "fork", "knife", "spoon", "bowl", "banana", "apple", "sandwich", "orange",
-    "broccoli", "carrot", "hot dog", "pizza", "donut", "cake", "chair", "sofa",
-    "pottedplant", "bed", "diningtable", "toilet", "tvmonitor", "laptop", "mouse",
-    "remote", "keyboard", "cell phone", "microwave", "oven", "toaster", "sink",
-    "refrigerator", "book", "clock", "vase", "scissors", "teddy bear", "hair drier",
-    "toothbrush"
-]
+        "person", "bicycle", "car", "motorbike", "aeroplane", "bus", "train", "truck",
+        "boat", "traffic light", "fire hydrant", "stop sign", "parking meter", "bench",
+        "bird", "cat", "dog", "horse", "sheep", "cow", "elephant", "bear", "zebra",
+        "giraffe", "backpack", "umbrella", "handbag", "tie", "suitcase", "frisbee",
+        "skis", "snowboard", "sports ball", "kite", "baseball bat", "baseball glove",
+        "skateboard", "surfboard", "tennis racket", "bottle", "wine glass", "cup",
+        "fork", "knife", "spoon", "bowl", "banana", "apple", "sandwich", "orange",
+        "broccoli", "carrot", "hot dog", "pizza", "donut", "cake", "chair", "sofa",
+        "pottedplant", "bed", "diningtable", "toilet", "tvmonitor", "laptop", "mouse",
+        "remote", "keyboard", "cell phone", "microwave", "oven", "toaster", "sink",
+        "refrigerator", "book", "clock", "vase", "scissors", "teddy bear", "hair drier",
+        "toothbrush"
+    ]
     tracker = DeepSort()
     tracker1 = DeepSort()
     tracker2 = DeepSort()
     tracker3 = DeepSort()
-    
-    while True: 
+
+    while True:
         # Each frame represent frames from each lane entering the intersection
-        ret, frame0 = cap.read() #lane0
+        ret, frame0 = cap.read()  #lane0
         if not ret:
             green_lane.value = "Error"
             # if there are no more frames to read from the video, break out of the loop
             # but i will recommend the system should be able to switch to a conventional traffic light system
             # rather than breaking out of the loop and causing the system to stop working
-            
+
             break
 
-        ret1, frame1 = cap1.read() #lane1
+        ret1, frame1 = cap1.read()  #lane1
         if not ret1:
             green_lane.value = "Error"
 
             break
 
-        ret2, frame2 = cap2.read() #lane2
+        ret2, frame2 = cap2.read()  #lane2
         if not ret2:
             green_lane.value = "Error"
 
             break
 
-        ret3, frame3 = cap3.read() #lane3
+        ret3, frame3 = cap3.read()  #lane3
         if not ret3:
             green_lane.value = "Error"
 
             break
-    
+
         frames = {"lane0": frame0, "lane1": frame1, "lane2": frame2, "lane3": frame3}
         trkr = {"lane0": tracker, "lane1": tracker1, "lane2": tracker2, "lane3": tracker3}
 
@@ -83,7 +81,8 @@ def frame_processing(no_of_vehicles_per_lane, green_lane):
                 print(f"Green light is on {frame}. Skipping this frame")
                 continue
             detections, v_frame = ob.plot_box(frame=frames[frame], list=objects)
-            detect_frame, vehicles_south, vehicles_north = ob.track_detect(detections=detections, img=v_frame, tracker=trkr[frame])
+            detect_frame, vehicles_south, vehicles_north = ob.track_detect(detections=detections, img=v_frame,
+                                                                           tracker=trkr[frame])
             no_of_vehicles_per_lane[frame] = len(vehicles_south)
             print(no_of_vehicles_per_lane)
             cv2.imshow("Frame", detect_frame)
@@ -116,7 +115,8 @@ def timing(no_of_vehicles_per_lane, green_lane):
         if green_lane.value == "None":
             green_lane.value = "lane0"
             print(f"Green light is on {green_lane}")
-            time.sleep(100) # This is just a placeholder for the actual code that will be used to control the traffic light hardware
+            time.sleep(
+                100)  # This is just a placeholder for the actual code that will be used to control the traffic light hardware
             continue
         elif green_lane.value == "Error":
             break
@@ -129,11 +129,13 @@ def timing(no_of_vehicles_per_lane, green_lane):
             lane_time[max_key] = no_of_vehicles_per_lane[max_key] * 100
             green_lane.value = max_key
             print(f"Green light is on {green_lane}")
-            time.sleep(lane_time[max_key]) # This is just a placeholder for the actual code that will be used to control the traffic light hardware
+            time.sleep(lane_time[
+                           max_key])  # This is just a placeholder for the actual code that will be used to control the traffic light hardware
         elif len(no_of_vehicles_per_lane.keys()) == 0:
             green_lane.value = "lane0"
             print(f"Green light is on {green_lane}")
-            time.sleep(100) # This is just a placeholder for the actual code that will be used to control the traffic light hardware
+            time.sleep(
+                100)  # This is just a placeholder for the actual code that will be used to control the traffic light hardware
         else:
             lane_left = {}
             for lane in no_of_vehicles_per_lane.keys():
@@ -146,12 +148,13 @@ def timing(no_of_vehicles_per_lane, green_lane):
             if lane_left[max_key] == 0:
                 lane_time[max_key] = no_of_vehicles_per_lane[max_key]
                 print(f"Green light is on {green_lane}")
-                time.sleep(100) # This is just a placeholder for the actual code that will be used to control the traffic light hardware 
+                time.sleep(
+                    100)  # This is just a placeholder for the actual code that will be used to control the traffic light hardware
             else:
-                lane_time[max_key] = no_of_vehicles_per_lane[max_key] * 100 #seconds
+                lane_time[max_key] = no_of_vehicles_per_lane[max_key] * 100  #seconds
                 print(f"Green light is on {green_lane}")
-                time.sleep(lane_time[max_key]) # This is just a placeholder for the place of the actual code that will be used to control the traffic light hardware
-
+                time.sleep(lane_time[
+                               max_key])  # This is just a placeholder for the place of the actual code that will be used to control the traffic light hardware
 
 # if __name__ == '__main__':
 #     """
