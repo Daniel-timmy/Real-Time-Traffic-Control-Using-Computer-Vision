@@ -1,0 +1,29 @@
+
+This Python code appears to be part of a traffic light control system. It's designed to manage the timing of traffic lights based on the number of vehicles in each lane. Here's a breakdown of what the code does:
+
+lane_time = {}: This dictionary stores the lanes that have turned green and their corresponding time.
+
+while True:: This is an infinite loop that keeps the traffic light control system running.
+
+if green_lane == "None": continue: If no lane is currently green, the loop continues to the next iteration.
+
+if len(lane_time.keys()) >= 4:: If all four lanes have been served (i.e., turned green), the code does the following:
+
+Copies the no_of_vehicles_per_lane dictionary to nvpl.
+Clears the lane_time dictionary.
+Finds the lane with the maximum number of vehicles and sets it as the green lane.
+Sets the green light duration for this lane proportional to the number of vehicles in the lane.
+Pauses execution for the duration of the green light.
+elif len(no_of_vehicles_per_lane.keys()) == 0:: If there are no vehicles in any lane, the code sets lane 0 as the green lane and pauses execution for a fixed duration.
+
+The else block handles the case where there are vehicles in some lanes but not all lanes have been served. It does the following:
+
+Creates a new dictionary lane_left with lanes that have not been served.
+Finds the lane with the maximum number of vehicles among the unserved lanes and sets it as the green lane.
+If there are no vehicles in the chosen lane, it sets the green light duration to a fixed value.
+If there are vehicles in the chosen lane, it sets the green light duration proportional to the number of vehicles in the lane.
+Pauses execution for the duration of the green light.
+if __name__ == '__main__':: This is the entry point of the script when it's run as a standalone program. The actual code for this part is not shown in the excerpt.
+
+The time.sleep() calls are placeholders for the actual code that would control the traffic light hardware. The durations are in seconds.
+

@@ -1,0 +1,6 @@
+opencv-python
+numpy
+tqdm
+ultralytics
+supervision>=0.20.0
+deep-sort-realtime
