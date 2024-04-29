@@ -13,7 +13,7 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "--mode",
-        default="aerial",
+        default="4C",
         help="Confidence threshold for the model",
         type=str,
     )

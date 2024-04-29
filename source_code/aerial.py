@@ -81,17 +81,17 @@ class VideoProcessor:
                 for frame in tqdm(frame_generator, total=self.video_info.total_frames):
                     annotated_frame, vehicle_per_zone = self.process_frame(frame)
                     no_of_vehicles_per_lane.update(vehicle_per_zone)
-                    # cv2.imshow("Processed Video", annotated_frame)
-                    # if cv2.waitKey(1) & 0xFF == ord("q"):
-                    #     green_lane.value = "Error"
-                    #     break
+                    cv2.imshow("Processed Video", annotated_frame)
+                    if cv2.waitKey(1) == 27:
+                        green_lane.value = "Error"
+                        break
                     sink.write_frame(annotated_frame)
         else:
             for frame in tqdm(frame_generator, total=self.video_info.total_frames):
                 annotated_frame, vehicle_per_zone = self.process_frame(frame)
                 no_of_vehicles_per_lane.update(vehicle_per_zone)
                 cv2.imshow("Processed Video", annotated_frame)
-                if cv2.waitKey(1) & 0xFF == ord("q"):
+                if cv2.waitKey(1) == 27:
                     green_lane.value = "Error"
                     break
             cv2.destroyAllWindows()
